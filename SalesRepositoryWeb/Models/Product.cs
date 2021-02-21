@@ -5,10 +5,10 @@ using System.Web;
 
 namespace SalesRepositoryWeb.Models
 {
-    public class Manager
+    public class Product
     {
-        public int Id { get; set; }
-        public string Lastname { get; set; }
+        public  int Id { get; set; }
+        public string Name { get; set; }
         public virtual ICollection<Sale> Sales { get; set; }
     }
 }
