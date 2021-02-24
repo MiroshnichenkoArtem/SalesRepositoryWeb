@@ -13,12 +13,12 @@ namespace SalesRepositoryWeb.Controllers
 {
     public class SalesController : Controller
     {
-        private SalesContext db = new SalesContext();
+        private UnitOfWork db = new UnitOfWork();
 
         // GET: Sales
         public ActionResult Index()
         {
-            var sales = db.Sales.Include(s => s.Customer).Include(s => s.Manager).Include(s => s.Product);
+            var sales = db.Sales.DbSet.Include(s => s.Customer).Include(s => s.Manager).Include(s => s.Product);
             return View(sales.ToList());
         }
 
@@ -29,7 +29,7 @@ namespace SalesRepositoryWeb.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Sale sale = db.Sales.Find(id);
+            Sale sale = db.Sales.DbSet.Find(id);
             if (sale == null)
             {
                 return HttpNotFound();
@@ -40,29 +40,25 @@ namespace SalesRepositoryWeb.Controllers
         // GET: Sales/Create
         public ActionResult Create()
         {
-            ViewBag.CustomerId = new SelectList(db.Customers, "Id", "Lastname");
-            ViewBag.ManagerId = new SelectList(db.Managers, "Id", "Lastname");
-            ViewBag.ProductId = new SelectList(db.Products, "Id", "Name");
+            ViewBag.CustomerId = new SelectList(db.Customers.DbSet, "Id", "Lastname");
+            ViewBag.ManagerId = new SelectList(db.Managers.DbSet, "Id", "Lastname");
+            ViewBag.ProductId = new SelectList(db.Products.DbSet, "Id", "Name");
             return View();
         }
 
-        // POST: Sales/Create
-        // Чтобы защититься от атак чрезмерной передачи данных, включите определенные свойства, для которых следует установить привязку. Дополнительные 
-        // сведения см. в разделе https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Date,Price,ManagerId,CustomerId,ProductId")] Sale sale)
         {
             if (ModelState.IsValid)
             {
-                db.Sales.Add(sale);
-                db.SaveChanges();
+                db.Sales.Create(sale);
                 return RedirectToAction("Index");
             }
 
-            ViewBag.CustomerId = new SelectList(db.Customers, "Id", "Lastname", sale.CustomerId);
-            ViewBag.ManagerId = new SelectList(db.Managers, "Id", "Lastname", sale.ManagerId);
-            ViewBag.ProductId = new SelectList(db.Products, "Id", "Name", sale.ProductId);
+            ViewBag.CustomerId = new SelectList(db.Customers.DbSet, "Id", "Lastname", sale.CustomerId);
+            ViewBag.ManagerId = new SelectList(db.Managers.DbSet, "Id", "Lastname", sale.ManagerId);
+            ViewBag.ProductId = new SelectList(db.Products.DbSet, "Id", "Name", sale.ProductId);
             return View(sale);
         }
 
@@ -73,33 +69,29 @@ namespace SalesRepositoryWeb.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Sale sale = db.Sales.Find(id);
+            Sale sale = db.Sales.DbSet.Find(id);
             if (sale == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.CustomerId = new SelectList(db.Customers, "Id", "Lastname", sale.CustomerId);
-            ViewBag.ManagerId = new SelectList(db.Managers, "Id", "Lastname", sale.ManagerId);
-            ViewBag.ProductId = new SelectList(db.Products, "Id", "Name", sale.ProductId);
+            ViewBag.CustomerId = new SelectList(db.Customers.DbSet, "Id", "Lastname", sale.CustomerId);
+            ViewBag.ManagerId = new SelectList(db.Managers.DbSet, "Id", "Lastname", sale.ManagerId);
+            ViewBag.ProductId = new SelectList(db.Products.DbSet, "Id", "Name", sale.ProductId);
             return View(sale);
         }
 
-        // POST: Sales/Edit/5
-        // Чтобы защититься от атак чрезмерной передачи данных, включите определенные свойства, для которых следует установить привязку. Дополнительные 
-        // сведения см. в разделе https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,Date,Price,ManagerId,CustomerId,ProductId")] Sale sale)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(sale).State = EntityState.Modified;
-                db.SaveChanges();
+                db.Sales.Update(sale);
                 return RedirectToAction("Index");
             }
-            ViewBag.CustomerId = new SelectList(db.Customers, "Id", "Lastname", sale.CustomerId);
-            ViewBag.ManagerId = new SelectList(db.Managers, "Id", "Lastname", sale.ManagerId);
-            ViewBag.ProductId = new SelectList(db.Products, "Id", "Name", sale.ProductId);
+            ViewBag.CustomerId = new SelectList(db.Customers.DbSet, "Id", "Lastname", sale.CustomerId);
+            ViewBag.ManagerId = new SelectList(db.Managers.DbSet, "Id", "Lastname", sale.ManagerId);
+            ViewBag.ProductId = new SelectList(db.Products.DbSet, "Id", "Name", sale.ProductId);
             return View(sale);
         }
 
@@ -110,7 +102,7 @@ namespace SalesRepositoryWeb.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Sale sale = db.Sales.Find(id);
+            Sale sale = db.Sales.DbSet.Find(id);
             if (sale == null)
             {
                 return HttpNotFound();
@@ -123,9 +115,8 @@ namespace SalesRepositoryWeb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Sale sale = db.Sales.Find(id);
+            Sale sale = db.Sales.DbSet.Find(id);
             db.Sales.Remove(sale);
-            db.SaveChanges();
             return RedirectToAction("Index");
         }
 
