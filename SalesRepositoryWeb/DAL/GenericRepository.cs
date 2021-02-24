@@ -12,11 +12,7 @@ namespace SalesRepositoryWeb.DAL
 
         private DbSet<TEntity> _dbSet;
         public DbSet<TEntity> DbSet => _dbSet;
-                                      
-                                      
-
-
-
+        
         public GenericRepository(DbContext context)
         {
             _context = context;

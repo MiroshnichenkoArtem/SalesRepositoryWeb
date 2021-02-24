@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using SalesRepositoryWeb.Models;
 
 namespace SalesRepositoryWeb.DAL
@@ -15,7 +12,6 @@ namespace SalesRepositoryWeb.DAL
         private GenericRepository<Product> _productRepository;
         private GenericRepository<Customer> _customerRepository;
 
-
         public GenericRepository<Manager> Managers =>
             _managerRepository ?? (_managerRepository = new GenericRepository<Manager>(db));
 
@@ -28,17 +24,17 @@ namespace SalesRepositoryWeb.DAL
         public GenericRepository<Product> Products =>
             _productRepository ?? (_productRepository = new GenericRepository<Product>(db));
 
-        private bool disposed = false;
+        private bool _disposed;
 
         public virtual void Dispose(bool disposing)
         {
-            if (!this.disposed)
+            if (!this._disposed)
             {
                 if (disposing)
                 {
                     db.Dispose();
                 }
-                this.disposed = true;
+                this._disposed = true;
             }
         }
 
