@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using SalesRepositoryWeb.DAL;
 using SalesRepositoryWeb.Models;
+using PagedList;
 
 namespace SalesRepositoryWeb.Controllers
 {
@@ -16,10 +17,26 @@ namespace SalesRepositoryWeb.Controllers
         private UnitOfWork db = new UnitOfWork();
 
         // GET: Sales
-        public ActionResult Index()
+        public ActionResult Index(int? page)
         {
-            var sales = db.Sales.DbSet.Include(s => s.Customer).Include(s => s.Manager).Include(s => s.Product);
-            return View(sales.ToList());
+          
+
+
+            var sales = db.Sales.DbSet.Include(s => s.Customer).Include(s => s.Manager).Include(s => s.Product).ToList();
+            //if (!string.IsNullOrEmpty(searchString))
+            //{
+            //    sales = sales.Where(s =>
+            //        s.Manager.Lastname.Contains(searchString) ||
+            //        s.Product.Name.Contains(searchString) ||
+            //        s.Customer.Lastname.Contains(searchString));
+            //}
+            //return View(sales.ToList());
+            
+            int pageSize = 3;
+            int pageNumber = (page ?? 1);
+            page = 1;
+            sales.OrderBy(x => x.Customer.Lastname);
+            return View(sales.ToPagedList(pageNumber, pageSize));
         }
 
         // GET: Sales/Details/5
@@ -120,6 +137,19 @@ namespace SalesRepositoryWeb.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
+        public ActionResult SalesSearch(string searchString)
+        {
+            var foundSales = db.Sales.DbSet.Where(x =>
+                x.Customer.Lastname.Contains(searchString) || x.Manager.Lastname.Contains(searchString)).ToList();
+            if (foundSales.Count == 0)
+            {
+                return HttpNotFound();
+            }
+
+            return PartialView(foundSales);
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -128,5 +158,6 @@ namespace SalesRepositoryWeb.Controllers
             }
             base.Dispose(disposing);
         }
+        
     }
 }
