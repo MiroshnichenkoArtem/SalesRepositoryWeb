@@ -214,6 +214,7 @@
     <Content Include="Views\SalesPartialView.cshtml" />
     <Content Include="Views\Sales\GetData.cshtml" />
     <Content Include="Views\Sales\Sales.cshtml" />
+    <Content Include="Views\_Chart.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

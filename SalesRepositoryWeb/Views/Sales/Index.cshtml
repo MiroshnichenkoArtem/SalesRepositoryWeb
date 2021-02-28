@@ -8,16 +8,16 @@
         <table class="table">
             <tr>
                 <td>
-                    <div class="editor-label">
+                    <div>
                         @Html.LabelFor(model => model.ProductName)
                     </div>
-                    <div class="editor-field">
+                    <div>
                         @Html.EditorFor(model => model.ProductName)
                     </div>
-                    <div class="editor-label">
+                    <div>
                         @Html.LabelFor(model => model.CustomerLastname)
                     </div>
-                    <div class="editor-field">
+                    <div>
                         @Html.EditorFor(model => model.CustomerLastname)
                     </div>
                 </td>
@@ -44,31 +44,31 @@
     $(document).ready(function () {
         getSales();
     });
-     $("#clear").on("click", function () {
-            $('#ProductName').val('');
-            $('#CustomerLastname').val('');
+    $("#clear").on("click", function () {
+        $('#ProductName').val('');
+        $('#CustomerLastname').val('');
   
-            clearFilter();
-     });
+        clearFilter();
+    });
     function getSales() {
         jQuery.ajax(
             {
                 url: "@Url.Action("Sales", "Sales")",
                 data: { page:@ViewBag.CurrentPage},
                 type: "GET",
-                success: function (data, textStatus, XHR) {
+                success: function (data) {
                     jQuery("#salesTable").html(data);
                 },
                 dataType: "html"
             }
         );
     }
-     function clearFilter() {
+    function clearFilter() {
         jQuery.ajax(
             {
                 url: "@Url.Action("ClearFilter", "Sales")",
                 type: "GET",
-                success: function (data, textStatus, XHR) {
+                success: function (data) {
                     jQuery("#salesTable").html(data);
                 },
                 dataType: "html"
@@ -76,3 +76,6 @@
         );
     }
 </script>
+@{
+
+}

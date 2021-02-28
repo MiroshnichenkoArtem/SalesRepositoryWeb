@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using System.Web;
-using System.Web.Mvc;
-using Newtonsoft.Json;
+﻿using PagedList;
 using SalesRepositoryWeb.DAL;
 using SalesRepositoryWeb.Models;
-using PagedList;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Web.Mvc;
 
 namespace SalesRepositoryWeb.Controllers
 {
@@ -19,7 +13,7 @@ namespace SalesRepositoryWeb.Controllers
         private UnitOfWork db = new UnitOfWork();
 
         // GET: Sales
-        public ActionResult  Index(int? page)
+        public ActionResult Index(int? page)
         {
             OrderFilter filter = (OrderFilter)Session["orderFilter"];
             ViewBag.CurrentPage = page ?? 1;
@@ -128,19 +122,6 @@ namespace SalesRepositoryWeb.Controllers
             return RedirectToAction("Index");
         }
 
-        [HttpPost]
-        public ActionResult SalesSearch(string searchString)
-        {
-            var foundSales = db.Sales.DbSet.Where(x =>
-                x.Customer.Lastname.Contains(searchString) || x.Manager.Lastname.Contains(searchString)).ToList();
-            if (foundSales.Count == 0)
-            {
-                return HttpNotFound();
-            }
-
-            return PartialView(foundSales);
-        }
-
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -153,26 +134,18 @@ namespace SalesRepositoryWeb.Controllers
         [HttpGet]
         public ActionResult Sales(int? page)
         {
-            try
+            var sales = db.Sales.DbSet.ToList();
+            OrderFilter filter = (OrderFilter)Session["orderFilter"];
+            if (filter != null)
             {
-                var sales = db.Sales.DbSet.ToList();
-                OrderFilter filter = (OrderFilter)Session["orderFilter"];
-                if (filter != null)
-                {
-                    sales = GetFilteredSales(sales, filter);
-                }
-                ViewBag.CurrentPage = page;
-                return PartialView(sales.ToPagedList(page ?? 1, 4));
+                sales = GetFilteredSales(sales, filter);
             }
-            catch (Exception ex)
-            {
-                
-                return View("Error");
-            }
+            ViewBag.CurrentPage = page;
+            return PartialView(sales.ToPagedList(page ?? 1, 4));
         }
         private List<Sale> GetFilteredSales(List<Sale> sales, OrderFilter filter)
         {
-           
+
             if (filter.ProductName != null)
             {
                 sales = sales.Where(x => x.Product.Name.Contains(filter.ProductName)).ToList();
@@ -199,5 +172,8 @@ namespace SalesRepositoryWeb.Controllers
             Session["orderFilter"] = null;
             return RedirectToAction("Sales");
         }
+
+
+
     }
 }
