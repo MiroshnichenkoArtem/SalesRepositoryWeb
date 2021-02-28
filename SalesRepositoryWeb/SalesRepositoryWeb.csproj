@@ -131,6 +131,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\CustomersController.cs" />
+    <Compile Include="Controllers\ManagersController.cs" />
     <Compile Include="Controllers\ProductsController.cs" />
     <Compile Include="Controllers\SalesController.cs" />
     <Compile Include="DAL\GenericRepository.cs" />
@@ -215,6 +216,11 @@
     <Content Include="Views\Sales\GetData.cshtml" />
     <Content Include="Views\Sales\Sales.cshtml" />
     <Content Include="Views\_Chart.cshtml" />
+    <Content Include="Views\Managers\Create.cshtml" />
+    <Content Include="Views\Managers\Delete.cshtml" />
+    <Content Include="Views\Managers\Details.cshtml" />
+    <Content Include="Views\Managers\Edit.cshtml" />
+    <Content Include="Views\Managers\Index.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
