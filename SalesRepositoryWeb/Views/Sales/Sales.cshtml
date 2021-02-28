@@ -57,6 +57,11 @@
 <p>
     @Html.ActionLink("Создать запись", "Create", new { page = ViewBag.CurrentPage })
 </p>
+<h2>Statistics</h2>
+<div>
+    <img src="@Url.Action("GetChart")" alt="Chart"/>
+</div>
+
 @if (Model != null)
 {
     @Html.PagedListPager(Model, page => Url.Action("Sales", new { page }), PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { UpdateTargetId = "salesTable" }))

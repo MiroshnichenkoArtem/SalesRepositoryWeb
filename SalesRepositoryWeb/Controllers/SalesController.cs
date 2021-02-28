@@ -4,6 +4,7 @@ using SalesRepositoryWeb.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Web.Helpers;
 using System.Web.Mvc;
 
 namespace SalesRepositoryWeb.Controllers
@@ -141,6 +142,17 @@ namespace SalesRepositoryWeb.Controllers
                 sales = GetFilteredSales(sales, filter);
             }
             ViewBag.CurrentPage = page;
+            var groups = sales.GroupBy(x => x.Manager);
+            List<int> xVal = new List<int>();
+            List<string> yVal = new List<string>();
+            foreach (var group in groups)
+            {
+                yVal.Add(group.Key.Lastname);
+                xVal.Add(group.Key.Sales.Count);
+            }
+
+            ViewBag.xVal = xVal.ToArray();
+            ViewBag.yVal = yVal.ToArray();
             return PartialView(sales.ToPagedList(page ?? 1, 4));
         }
         private List<Sale> GetFilteredSales(List<Sale> sales, OrderFilter filter)
@@ -173,6 +185,28 @@ namespace SalesRepositoryWeb.Controllers
             return RedirectToAction("Sales");
         }
 
+        public ActionResult GetChart()
+        {
+            var sales = db.Sales.DbSet;
+            var groups = sales.GroupBy(x => x.Manager);
+            List<int> yVal = new List<int>();
+            List<string> xVal = new List<string>();
+            foreach (var group in groups)
+            {
+                xVal.Add(group.Key.Lastname);
+                yVal.Add(group.Key.Sales.Count);
+            }
+
+
+
+            byte[] chart = new Chart(600, 300, ChartTheme.Vanilla)
+                .AddSeries(
+                    name: "Manager",
+                    xValue: xVal,
+                    yValues: yVal)
+                .GetBytes();
+            return File(chart, "image/png");
+        }
 
 
     }
