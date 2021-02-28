@@ -146,10 +146,13 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Customer.cs" />
+    <Compile Include="Models\FilterViewModel.cs" />
+    <Compile Include="Models\IndexViewModel.cs" />
     <Compile Include="Models\Manager.cs" />
+    <Compile Include="Models\PageViewModel.cs" />
     <Compile Include="Models\Product.cs" />
     <Compile Include="Models\Sale.cs" />
-    <Compile Include="Models\SalesViewModel.cs" />
+    <Compile Include="Models\SalesFilter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -198,17 +201,19 @@
     <Content Include="Views\Sales\Details.cshtml" />
     <Content Include="Views\Sales\Edit.cshtml" />
     <Content Include="Views\Sales\Index.cshtml" />
-    <Content Include="Views\Sales\Customers\Create.cshtml" />
-    <Content Include="Views\Sales\Customers\Delete.cshtml" />
-    <Content Include="Views\Sales\Customers\Details.cshtml" />
-    <Content Include="Views\Sales\Customers\Edit.cshtml" />
-    <Content Include="Views\Sales\Customers\Index.cshtml" />
+    <Content Include="Views\Customers\Create.cshtml" />
+    <Content Include="Views\Customers\Delete.cshtml" />
+    <Content Include="Views\Customers\Details.cshtml" />
+    <Content Include="Views\Customers\Edit.cshtml" />
+    <Content Include="Views\Customers\Index.cshtml" />
     <Content Include="Views\Products\Create.cshtml" />
     <Content Include="Views\Products\Delete.cshtml" />
     <Content Include="Views\Products\Details.cshtml" />
     <Content Include="Views\Products\Edit.cshtml" />
     <Content Include="Views\Products\Index.cshtml" />
-    <Content Include="Views\Sales\SalesSearch.cshtml" />
+    <Content Include="Views\SalesPartialView.cshtml" />
+    <Content Include="Views\Sales\GetData.cshtml" />
+    <Content Include="Views\Sales\Sales.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

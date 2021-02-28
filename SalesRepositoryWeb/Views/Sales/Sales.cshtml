@@ -1,0 +1,64 @@
+﻿@model IPagedList<SalesRepositoryWeb.Models.Sale>
+@using PagedList;
+@using PagedList.Mvc;
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<table class="table">
+    <tr>
+        <th>
+            <label class="control-label">Customer Lastname name</label>
+        </th>
+        <th>
+            <label class="control-label">Manager Lastname</label>
+        </th>
+        <th>
+            <label class="control-label">Product name</label>
+        </th>
+        <th>
+            <label class="control-label">Date</label>
+        </th>
+        <th>
+            <label class="control-label">Price</label>
+        </th>
+        <th></th>
+    </tr>
+    @if (Model != null)
+    {
+        foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Customer.Lastname)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Manager.Lastname)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Product.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Date)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                   
+                        @Html.ActionLink("Редактировать", "Edit", new { id = item.Id, page = ViewBag.CurrentPage })<b>  </b>
+                        @Html.ActionLink("Удалить", "Delete", new { id = item.Id, page = ViewBag.CurrentPage })
+                 
+                </td>
+            </tr>
+        }
+    }
+</table>
+<p>
+    @Html.ActionLink("Создать запись", "Create", new { page = ViewBag.CurrentPage })
+</p>
+@if (Model != null)
+{
+    @Html.PagedListPager(Model, page => Url.Action("Sales", new { page }), PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { UpdateTargetId = "salesTable" }))
+}
+

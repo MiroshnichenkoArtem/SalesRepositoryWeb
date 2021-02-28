@@ -1,68 +1,78 @@
-﻿@model PagedList.IPagedList<SalesRepositoryWeb.Models.Sale>
-@using PagedList.Mvc;
-@using SalesRepositoryWeb.Models
+﻿@model SalesRepositoryWeb.Models.OrderFilter
 
-@{
-    ViewBag.Title = "Index";
+
+<div>
+    @using (Ajax.BeginForm("ApplyFilter", new AjaxOptions { UpdateTargetId = "salesTable" }))
+    {
+        @Html.AntiForgeryToken()
+        <table class="table">
+            <tr>
+                <td>
+                    <div class="editor-label">
+                        @Html.LabelFor(model => model.ProductName)
+                    </div>
+                    <div class="editor-field">
+                        @Html.EditorFor(model => model.ProductName)
+                    </div>
+                    <div class="editor-label">
+                        @Html.LabelFor(model => model.CustomerLastname)
+                    </div>
+                    <div class="editor-field">
+                        @Html.EditorFor(model => model.CustomerLastname)
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="submit" value="Поиск" />
+                    <input type="button" id="clear" value="Сброс" />
+                </td>
+                <td>
+                </td>
+            </tr>
+        </table>
+    }
+    <div id="salesTable">
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
 }
 
-<h2>Index</h2>
-
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-
-
-
-<table class="table">
-    <tr>
-        <th>
-            <label class="control-label">Customer Lastname name</label>
-        </th>
-        <th>
-            <label class="control-label">Manager Lastname</label>
-        </th>
-        <th>
-            <label class="control-label">Product name</label>
-        </th>
-        <th>
-            <label class="control-label">Date</label>
-        </th>
-        <th>
-            <label class="control-label">Price</label>
-        </th>
-        <th></th>
-    </tr>
-
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Customer.Lastname)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Manager.Lastname)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Product.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Date)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Price)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-            </td>
-        </tr>
+<script>
+    $(document).ready(function () {
+        getSales();
+    });
+     $("#clear").on("click", function () {
+            $('#ProductName').val('');
+            $('#CustomerLastname').val('');
+  
+            clearFilter();
+     });
+    function getSales() {
+        jQuery.ajax(
+            {
+                url: "@Url.Action("Sales", "Sales")",
+                data: { page:@ViewBag.CurrentPage},
+                type: "GET",
+                success: function (data, textStatus, XHR) {
+                    jQuery("#salesTable").html(data);
+                },
+                dataType: "html"
+            }
+        );
     }
-
-</table>
-<br />
-Страница @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) из @Model.PageCount
-
-@Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
-
+     function clearFilter() {
+        jQuery.ajax(
+            {
+                url: "@Url.Action("ClearFilter", "Sales")",
+                type: "GET",
+                success: function (data, textStatus, XHR) {
+                    jQuery("#salesTable").html(data);
+                },
+                dataType: "html"
+            }
+        );
+    }
+</script>

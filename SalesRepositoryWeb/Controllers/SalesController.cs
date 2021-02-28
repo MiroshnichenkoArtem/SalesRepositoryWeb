@@ -4,8 +4,10 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using Newtonsoft.Json;
 using SalesRepositoryWeb.DAL;
 using SalesRepositoryWeb.Models;
 using PagedList;
@@ -17,26 +19,15 @@ namespace SalesRepositoryWeb.Controllers
         private UnitOfWork db = new UnitOfWork();
 
         // GET: Sales
-        public ActionResult Index(int? page)
+        public ActionResult  Index(int? page)
         {
-          
-
-
-            var sales = db.Sales.DbSet.Include(s => s.Customer).Include(s => s.Manager).Include(s => s.Product).ToList();
-            //if (!string.IsNullOrEmpty(searchString))
-            //{
-            //    sales = sales.Where(s =>
-            //        s.Manager.Lastname.Contains(searchString) ||
-            //        s.Product.Name.Contains(searchString) ||
-            //        s.Customer.Lastname.Contains(searchString));
-            //}
-            //return View(sales.ToList());
-            
-            int pageSize = 3;
-            int pageNumber = (page ?? 1);
-            page = 1;
-            sales.OrderBy(x => x.Customer.Lastname);
-            return View(sales.ToPagedList(pageNumber, pageSize));
+            OrderFilter filter = (OrderFilter)Session["orderFilter"];
+            ViewBag.CurrentPage = page ?? 1;
+            if (filter != null)
+            {
+                return View(filter);
+            }
+            return View(new OrderFilter());
         }
 
         // GET: Sales/Details/5
@@ -158,6 +149,55 @@ namespace SalesRepositoryWeb.Controllers
             }
             base.Dispose(disposing);
         }
-        
+
+        [HttpGet]
+        public ActionResult Sales(int? page)
+        {
+            try
+            {
+                var sales = db.Sales.DbSet.ToList();
+                OrderFilter filter = (OrderFilter)Session["orderFilter"];
+                if (filter != null)
+                {
+                    sales = GetFilteredSales(sales, filter);
+                }
+                ViewBag.CurrentPage = page;
+                return PartialView(sales.ToPagedList(page ?? 1, 4));
+            }
+            catch (Exception ex)
+            {
+                
+                return View("Error");
+            }
+        }
+        private List<Sale> GetFilteredSales(List<Sale> sales, OrderFilter filter)
+        {
+           
+            if (filter.ProductName != null)
+            {
+                sales = sales.Where(x => x.Product.Name.Contains(filter.ProductName)).ToList();
+            }
+            if (filter.CustomerLastname != null)
+            {
+                sales = sales.Where(x => x.Customer.Lastname.Contains(filter.CustomerLastname)).ToList();
+            }
+            return sales;
+        }
+        [HttpPost]
+        public ActionResult ApplyFilter(OrderFilter model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return PartialView("Sales", null);
+            }
+            Session["orderFilter"] = model;
+            return RedirectToAction("Sales");
+        }
+        [HttpGet]
+        public ActionResult ClearFilter()
+        {
+            Session["orderFilter"] = null;
+            return RedirectToAction("Sales");
+        }
     }
 }
